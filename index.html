@@ -1,356 +1,559 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blood Ravens · Full Ranking Leaderboard</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: #f8f9fc;
-            font-family: 'Inter', -apple-system, system-ui, sans-serif;
-            padding: 32px 20px 60px;
-            display: flex;
-            justify-content: center;
-        }
-        .container {
-            max-width: 960px;
-            width: 100%;
-        }
-        .page-header {
-            border-bottom: 1px solid #e2e4eb;
-            padding-bottom: 20px;
-            margin-bottom: 28px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
-        .page-title {
-            font-size: 22px;
-            font-weight: 600;
-            letter-spacing: -0.02em;
-        }
-        .page-subtitle {
-            font-size: 12px;
-            color: #8e8ea1;
-            margin-top: 4px;
-        }
-        .page-meta {
-            text-align: right;
-            font-size: 12px;
-            color: #5b5b6c;
-        }
-        .page-meta .date {
-            font-weight: 500;
-            color: #1e1e2f;
-        }
-        .summary-bar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 28px;
-            flex-wrap: wrap;
-        }
-        .summary-card {
-            background: #fff;
-            border: 1px solid #e2e4eb;
-            border-radius: 8px;
-            padding: 14px 18px;
-            flex: 1;
-            min-width: 110px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-        }
-        .summary-label {
-            font-size: 10px;
-            font-weight: 500;
-            color: #8e8ea1;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .summary-value {
-            font-size: 20px;
-            font-weight: 600;
-            color: #1e1e2f;
-        }
-        .summary-value.accent {
-            font-size: 14px;
-            font-weight: 600;
-            color: #4a4a6a;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blood Ravens · Leaderboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&display=swap');
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .ranking-table {
-            background: #fff;
-            border-radius: 12px;
-            border: 1px solid #e2e4eb;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-        .rank-row {
-            display: grid;
-            grid-template-columns: 60px 1fr 90px 140px 100px;
-            padding: 10px 16px;
-            border-bottom: 1px solid #edeff4;
-            align-items: center;
-            font-size: 13px;
-            transition: background 0.1s;
-        }
-        .rank-row:last-child {
-            border-bottom: none;
-        }
-        .rank-row:hover {
-            background: #f8faff;
-        }
-        .rank-header {
-            background: #f1f3f8;
-            font-weight: 600;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #5b5b6c;
-            padding: 8px 16px;
-            border-bottom: 1px solid #e2e4eb;
-            display: grid;
-            grid-template-columns: 60px 1fr 90px 140px 100px;
-        }
-        .rank-header span {
-            padding: 0;
-        }
-        .rank-number {
-            font-weight: 600;
-            color: #8e8ea1;
-            font-variant-numeric: tabular-nums;
-        }
-        .player-name {
-            font-weight: 600;
-            color: #1e1e2f;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .player-stars {
-            font-weight: 600;
-            color: #1e1e2f;
-            font-variant-numeric: tabular-nums;
-        }
-        .player-rank {
-            font-weight: 500;
-            color: #5b5b6c;
-        }
-        .role-pill {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 0.03em;
-            text-align: center;
-        }
-        .role-mage { background: #e0e7ff; color: #3730a3; }
-        .role-roam { background: #ede9fe; color: #6b21a8; }
-        .role-jungle { background: #dcfce7; color: #166534; }
-        .role-exp { background: #fee2e2; color: #991b1b; }
-        .role-gold { background: #fef9c3; color: #854d0e; }
-        .role-flex { background: #e5e7eb; color: #374151; }
-        .role-adjust { background: #f1f5f9; color: #475569; }
-        .role-none { background: #f8fafc; color: #94a3b8; }
+:root {
+  /* Base palette — cream & ink, unchanged from source */
+  --bg: #f5f0e8;
+  --white: #fdfaf4;
+  --ink: #0d0d0d;
+  --muted: #8a7570;
+  --accent: #d4b07a;
+  --border: #e8dcc8;
 
-        .footer-note {
-            margin-top: 32px;
-            padding-top: 14px;
-            border-top: 1px solid #e2e4eb;
-            font-size: 10px;
-            color: #8e8ea1;
-            display: flex;
-            justify-content: space-between;
-        }
+  /* Nav / hero — blues replaced with deep crimson-black */
+  --nav-bg: #2a0d10;
+  --hero-gradient-mid: #6e1f22;
+  --hero-gradient-deep: #180506;
 
-        @media (max-width: 700px) {
-            .rank-row, .rank-header {
-                grid-template-columns: 40px 1fr 70px 100px 70px;
-                font-size: 11px;
-                padding: 8px 10px;
-            }
-            .rank-header {
-                font-size: 9px;
-            }
-            .role-pill {
-                font-size: 8px;
-                padding: 1px 6px;
-            }
-        }
-    </style>
+  --accent-rgb: 184, 149, 90;
+  --bg-rgb: 245, 240, 232;
+  --white-rgb: 253, 250, 244;
+
+  --text-dim: #cba6a2;
+  --text-mid: #8a5a54;
+  --text-light: #ddc0bb;
+  --nav-link-color: #ddc0bb;
+
+  --crimson: #a3272a;
+  --crimson-deep: #6e1518;
+
+  --font-serif-stack: 'Cormorant Garamond', Georgia, serif;
+  --font-sans-stack: 'Jost', Arial, sans-serif;
+}
+
+body {
+  font-family: var(--font-serif-stack);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+/* NAV */
+nav {
+  background: var(--nav-bg);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+nav .logo {
+  color: var(--accent);
+  font-size: 1.2rem;
+  text-decoration: none;
+  letter-spacing: 0.04em;
+}
+nav ul { list-style: none; display: flex; gap: 1.5rem; }
+nav ul a {
+  color: var(--nav-link-color);
+  text-decoration: none;
+  font-family: var(--font-sans-stack);
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+nav ul a:hover { color: var(--accent); }
+nav ul a .material-icons { font-size: 1.2rem; line-height: 1; }
+
+/* HERO */
+.hero-full {
+  height: 68vh;
+  min-height: 620px;
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background: var(--nav-bg);
+  text-align: center;
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 60% 40%, rgba(163, 39, 42, 0.22) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 80% at 20% 80%, rgba(var(--bg-rgb), 0.05) 0%, transparent 50%),
+    linear-gradient(160deg, var(--ink) 0%, var(--hero-gradient-mid) 50%, var(--hero-gradient-deep) 100%);
+  z-index: 0;
+}
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(var(--accent-rgb), 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--accent-rgb), 0.06) 1px, transparent 1px);
+  background-size: 80px 80px;
+  z-index: 0;
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 0 2rem;
+  max-width: 800px;
+  text-align: center;
+}
+.hero-eyebrow {
+  font-family: var(--font-serif-stack);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.hero-title {
+  font-family: var(--font-serif-stack);
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 300;
+  color: var(--white);
+  line-height: 1.1;
+  margin-bottom: 2rem;
+}
+.hero-title em {
+  font-style: italic;
+  color: var(--accent);
+}
+.hero-desc {
+  font-family: var(--font-sans-stack);
+  font-size: 1rem;
+  font-weight: 300;
+  color: rgba(var(--white-rgb), 0.7);
+  max-width: 480px;
+  margin: 0 auto 3rem;
+  line-height: 1.6;
+}
+.hero-actions {
+  display: flex;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 1rem 2.4rem;
+  background: var(--accent);
+  color: var(--nav-bg);
+  text-decoration: none;
+  font-family: var(--font-sans-stack);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+.btn:hover { opacity: 0.85; }
+.btn-outline {
+  display: inline-block;
+  padding: 1rem 2.4rem;
+  background: transparent;
+  color: var(--white);
+  text-decoration: none;
+  font-family: var(--font-sans-stack);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border: 1px solid rgba(var(--white-rgb), 0.4);
+  cursor: pointer;
+  transition: border-color 0.3s ease, color 0.3s ease;
+}
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+/* GENERAL SECTION */
+section {
+  padding: 4rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+section h2 {
+  font-size: 1.8rem;
+  font-weight: normal;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.8rem;
+}
+
+/* LEADERBOARD SUMMARY STRIP */
+.lb-summary {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+.lb-summary-item {
+  flex: 1;
+  min-width: 140px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--crimson);
+  padding: 1.2rem 1.4rem;
+  text-align: left;
+}
+.lb-summary-label {
+  font-family: var(--font-sans-stack);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+}
+.lb-summary-value {
+  font-family: var(--font-serif-stack);
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+.lb-summary-value.accent { color: var(--crimson); font-size: 1.3rem; font-weight: 600; }
+
+/* TIER GROUP */
+.tier-group { margin-bottom: 3.2rem; }
+.tier-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  margin-bottom: 1.1rem;
+}
+.tier-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  position: relative;
+  top: 1px;
+}
+.tier-name {
+  font-family: var(--font-serif-stack);
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+.tier-count {
+  font-family: var(--font-sans-stack);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-left: auto;
+  border-bottom: 1px solid var(--border);
+  flex: 1;
+  padding-bottom: 0.5rem;
+  text-align: right;
+}
+
+/* LEADERBOARD ROWS */
+.lb-table {
+  background: var(--white);
+  border: 1px solid var(--border);
+}
+.lb-row {
+  display: grid;
+  grid-template-columns: 56px 1fr 130px 110px;
+  align-items: center;
+  padding: 0.8rem 1.2rem;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s, border-left-color 0.15s;
+  border-left: 3px solid transparent;
+}
+.lb-row:last-child { border-bottom: none; }
+.lb-row:hover {
+  background: rgba(163, 39, 42, 0.04);
+  border-left-color: var(--crimson);
+}
+.lb-rank {
+  font-family: var(--font-serif-stack);
+  font-size: 1.3rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+.lb-row.top .lb-rank { color: var(--crimson); font-weight: 600; }
+.lb-player {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+.lb-name {
+  font-family: var(--font-serif-stack);
+  font-size: 1.08rem;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lb-team {
+  font-family: var(--font-sans-stack);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.lb-role {
+  font-family: var(--font-sans-stack);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-mid);
+  border: 1px solid var(--border);
+  padding: 0.25rem 0.6rem;
+  text-align: center;
+  justify-self: start;
+  background: var(--bg);
+}
+.lb-tier-tag {
+  font-family: var(--font-sans-stack);
+  font-size: 0.66rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-align: right;
+  color: var(--muted);
+}
+
+/* ABOUT / CTA */
+#about {
+  background: var(--nav-bg);
+  color: var(--white);
+  padding: 4rem 2rem;
+  max-width: none;
+  text-align: center;
+}
+#about .about-container { max-width: 700px; margin: 0 auto; }
+#about h2 {
+  color: var(--white);
+  border-bottom-color: rgba(var(--white-rgb), 0.2);
+  margin-bottom: 2rem;
+}
+#about p {
+  font-family: var(--font-sans-stack);
+  color: rgba(var(--white-rgb), 0.85);
+  line-height: 1.8;
+  font-size: 1rem;
+}
+#about a { color: var(--accent); text-decoration: none; }
+#about a:hover { text-decoration: underline; }
+
+footer {
+  background: var(--nav-bg);
+  color: var(--muted);
+  text-align: center;
+  padding: 2rem;
+  font-family: var(--font-sans-stack);
+  font-size: 0.82rem;
+}
+footer a { color: var(--accent); text-decoration: none; }
+
+@media (max-width: 640px) {
+  .lb-row { grid-template-columns: 40px 1fr 90px; }
+  .lb-tier-tag { display: none; }
+  nav ul { gap: 0.9rem; }
+  nav ul a span:not(.material-icons) { display: none; }
+}
+</style>
 </head>
 <body>
-<div class="container">
-    <div class="page-header">
-        <div>
-            <div class="page-title">Blood Ravens · Full Ranking Leaderboard</div>
-            <div class="page-subtitle">All active players ordered by Rank Stars (highest → lowest)</div>
-        </div>
-        <div class="page-meta">
-            <span class="date">Snapshot: July 3, 2026</span><br>
-            <span>72 active players</span>
-        </div>
+
+<nav>
+  <a href="#home" class="logo">BLOOD RAVENS</a>
+  <ul>
+    <li><a href="#home"><span class="material-icons">home</span><span>Home</span></a></li>
+    <li><a href="#leaderboard"><span class="material-icons">military_tech</span><span>Leaderboard</span></a></li>
+    <li><a href="#about"><span class="material-icons">groups</span><span>Squads</span></a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero-full" id="home" style="padding:0;">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Season Standings · Malé, Maldives</div>
+    <h1 class="hero-title">The Official <em>Leaderboard</em></h1>
+    <p class="hero-desc">
+      Ranked performance across every Blood Ravens squad, drawn from the current season's climb through the mythic tiers. Updated as our players push higher.
+    </p>
+    <div class="hero-actions">
+      <a href="#leaderboard" class="btn">View Rankings</a>
+      <a href="#about" class="btn-outline">Our Squads</a>
     </div>
+  </div>
+</section>
 
-    <div class="summary-bar">
-        <div class="summary-card"><div class="summary-label">Total Active</div><div class="summary-value">72</div></div>
-        <div class="summary-card"><div class="summary-label">Ranked Players</div><div class="summary-value">65</div></div>
-        <div class="summary-card"><div class="summary-label">Highest Stars</div><div class="summary-value">251</div></div>
-        <div class="summary-card"><div class="summary-label">Top Rank</div><div class="summary-value accent">Mythical Immortal</div></div>
+<!-- LEADERBOARD -->
+<section id="leaderboard">
+  <h2>Roster Rankings</h2>
+
+  <div class="lb-summary">
+    <div class="lb-summary-item">
+      <div class="lb-summary-label">Total Players</div>
+      <div class="lb-summary-value">73</div>
     </div>
-
-    <div class="ranking-table">
-        <div class="rank-header">
-            <span>#</span>
-            <span>Player</span>
-            <span>Stars</span>
-            <span>Rank</span>
-            <span>Main Role</span>
-        </div>
-
-        <!-- Data rows will be injected here by JS (or we can pre-render) -->
-        <!-- We'll pre-render with a script to avoid manual listing, but for static HTML we can generate the list -->
-        <!-- Since we need to produce a self-contained HTML, we'll generate the rows from the data using JavaScript on page load -->
+    <div class="lb-summary-item">
+      <div class="lb-summary-label">Ranked Players</div>
+      <div class="lb-summary-value">64</div>
     </div>
-
-    <div class="footer-note">
-        <span>Blood Ravens — Internal Ranking</span>
-        <span>Generated 2026-07-03</span>
+    <div class="lb-summary-item">
+      <div class="lb-summary-label">Active Squads</div>
+      <div class="lb-summary-value">4</div>
     </div>
-</div>
+    <div class="lb-summary-item">
+      <div class="lb-summary-label">Peak Rank</div>
+      <div class="lb-summary-value accent">Mythical Immortal</div>
+    </div>
+  </div>
 
-<script>
-    // Raw data (filtered, sorted)
-    const players = [
-        { name: "─ Sʜᴇɴ୨ৎ", stars: 251, rank: "Mythical Immortal", role: "Mage" },
-        { name: "Yuta", stars: 185, rank: "Mythical Immortal", role: "Jungle" },
-        { name: "ડꫝꪖᦔꪮ᭙", stars: 181, rank: "Mythical Immortal", role: "Roam" },
-        { name: "Jazu", stars: 160, rank: "Mythical Immortal", role: "Mage" },
-        { name: "rymluvkaashi", stars: 160, rank: "Mythical Immortal", role: "Roam" },
-        { name: "HILLO", stars: 144, rank: "Mythical Immortal", role: "Jungle" },
-        { name: "Keoasuno", stars: 142, rank: "Mythical Immortal", role: "Exp" },
-        { name: "Nomi :3", stars: 128, rank: "Mythical Immortal", role: "Mage" },
-        { name: "Ruî 怜", stars: 124, rank: "Mythical Immortal", role: "Mage" },
-        { name: "illicit.96", stars: 120, rank: "Mythical Immortal", role: "Roam" },
-        { name: "ꜱкаяапg۶ৎ", stars: 120, rank: "Mythical Immortal", role: "Roam" },
-        { name: "Ash?", stars: 116, rank: "Mythical Immortal", role: "Flex" },
-        { name: "ＨｕｌＴｚｙ", stars: 111, rank: "Mythical Immortal", role: "Roam" },
-        { name: "Saurian :p", stars: 108, rank: "Mythical Immortal", role: "Mage" },
-        { name: "Tatta", stars: 106, rank: "Mythical Immortal", role: "Gold" },
-        { name: "AahillProMaxx", stars: 103, rank: "Mythical Immortal", role: "Roam" },
-        { name: "Zangsu", stars: 103, rank: "Mythical Immortal", role: "Jungle" },
-        { name: "Azmeen", stars: 100, rank: "Mythical Immortal", role: "Mage" },
-        { name: "Mitsuki", stars: 100, rank: "Mythical Immortal", role: "Mage" },
-        { name: "Xeno", stars: 95, rank: "Mythical Glory", role: "Exp" },
-        { name: "ᴠ@ɴᴅᴇттᴀ", stars: 91, rank: "Mythical Glory", role: "Gold" },
-        { name: "Suki", stars: 87, rank: "Mythical Glory", role: "Gold" },
-        { name: "Naveel", stars: 80, rank: "Mythical Glory", role: "Exp" },
-        { name: "ᴀʟғʀᴇᴅ", stars: 78, rank: "Mythical Glory", role: "Exp" },
-        { name: "3369King", stars: 77, rank: "Mythical Glory", role: "Jungle" },
-        { name: "ekko", stars: 76, rank: "Mythical Glory", role: "Mage" },
-        { name: "chrollo lucilfer", stars: 73, rank: "Mythical Glory", role: "Gold" },
-        { name: "K.", stars: 72, rank: "Mythical Glory", role: "Jungle" },
-        { name: "Aman7", stars: 71, rank: "Mythical Glory", role: "Jungle" },
-        { name: "Axain", stars: 71, rank: "Mythical Glory", role: "Exp" },
-        { name: "Jimbo", stars: 70, rank: "Mythical Glory", role: "Flex" },
-        { name: "DelvineTheOracle", stars: 68, rank: "Mythical Glory", role: "Roam" },
-        { name: "AiZane", stars: 64, rank: "Mythical Glory", role: "Exp" },
-        { name: "鬼•|Nɪᴋᴀシ", stars: 64, rank: "Mythical Glory", role: "Jungle" },
-        { name: "Asham", stars: 64, rank: "Mythical Glory", role: "Roam" },
-        { name: "Namikaze", stars: 64, rank: "Mythical Glory", role: "Gold" },
-        { name: "мʏɴх", stars: 63, rank: "Mythical Glory", role: "Gold" },
-        { name: "Mimiim", stars: 62, rank: "Mythical Glory", role: "Gold" },
-        { name: "Mogucantinspire", stars: 61, rank: "Mythical Glory", role: "Jungle" },
-        { name: "Noctis", stars: 60, rank: "Mythical Glory", role: "Mage" },
-        { name: "Phantom", stars: 60, rank: "Mythical Glory", role: "Jungle" },
-        { name: "aloo", stars: 59, rank: "Mythical Glory", role: "Gold" },
-        { name: "Izzu", stars: 57, rank: "Mythical Glory", role: "Jungle" },
-        { name: "JANAHU", stars: 57, rank: "Mythical Glory", role: "Exp" },
-        { name: "Yaanᴷᵘᵐᵃʳ", stars: 56, rank: "Mythical Glory", role: "Flex" },
-        { name: "maaız", stars: 55, rank: "Mythical Glory", role: "Roam" },
-        { name: "F@@THIK_44", stars: 55, rank: "Mythical Glory", role: "Mage" },
-        { name: "Zombie", stars: 53, rank: "Mythical Glory", role: "Flex" },
-        { name: "Kaa Tempest :3", stars: 53, rank: "Mythical Glory", role: "Jungle" },
-        { name: "Silvermist", stars: 50, rank: "Mythical Glory", role: "Roam" },
-        { name: "Poison", stars: 50, rank: "Mythical Glory", role: "Mage" },
-        { name: "Calcifer", stars: 47, rank: "Mythical Honor", role: "Gold" },
-        { name: "AaL4M", stars: 45, rank: "Mythical Honor", role: "Roam" },
-        { name: "HUSSAIN", stars: 41, rank: "Mythical Honor", role: "Exp" },
-        { name: "Black_053", stars: 41, rank: "Mythical Honor", role: "Exp" },
-        { name: "Vooko", stars: 33, rank: "Mythical Honor", role: "Exp" },
-        { name: "ANDYYY", stars: 31, rank: "Mythical Honor", role: "Gold" },
-        { name: "maaz", stars: 28, rank: "Mythical Honor", role: "Gold" },
-        { name: "Azif", stars: 27, rank: "Mythical Honor", role: "Roam" },
-        { name: "Raa~", stars: 26, rank: "Mythical Honor", role: "Roam" },
-        { name: "DEATH MESSENGER", stars: 19, rank: "Mythic", role: "Exp" },
-        { name: "FAAILLL", stars: 18, rank: "Mythic", role: "—" },
-        { name: "Yaaseen", stars: 14, rank: "Mythic", role: "Gold" },
-        { name: "Vaa!l", stars: 12, rank: "Mythic", role: "Flex" },
-        { name: "ñãşhų", stars: 8, rank: "Mythic", role: "Adjust" },
-        { name: "Ibaanu", stars: 0, rank: "Unranked", role: "—" },
-        { name: "isagi", stars: 0, rank: "Unranked", role: "Jungle" },
-        { name: "Taiyo", stars: 0, rank: "Unranked", role: "Roam" }
-    ];
+  <!-- MYTHICAL IMMORTAL -->
+  <div class="tier-group">
+    <div class="tier-head">
+      <span class="tier-dot" style="background:#94a3b8;"></span>
+      <span class="tier-name">Mythical Immortal</span>
+      <span class="tier-count">19 players</span>
+    </div>
+    <div class="lb-table">
+      <div class="lb-row top"><div class="lb-rank">01</div><div class="lb-player"><div class="lb-name">─ Sʜᴇɴ୨ৎ</div><div class="lb-team">BR Prime</div></div><div class="lb-role">Mage</div><div class="lb-tier-tag">Immortal</div></div>
+      <div class="lb-row top"><div class="lb-rank">02</div><div class="lb-player"><div class="lb-name">☆MAESTRO☆</div><div class="lb-team">BR Prime</div></div><div class="lb-role">Mage</div><div class="lb-tier-tag">Immortal</div></div>
+      <div class="lb-row top"><div class="lb-rank">03</div><div class="lb-player"><div class="lb-name">AahillProMaxx</div><div class="lb-team">BR Prime</div></div><div class="lb-role">Roam</div><div class="lb-tier-tag">Immortal</div></div>
+      <div class="lb-row"><div class="lb-rank">04</div><div class="lb-player"><div class="lb-name">Ash?</div><div class="lb-team">BR 2</div></div><div class="lb-role">Flex</div><div class="lb-tier-tag">Immortal</div></div>
+      <div class="lb-row"><div class="lb-rank">05</div><div class="lb-player"><div class="lb-name">Azmeen</div><div class="lb-team">BR Prime</div></div><div class="lb-role">Mage</div><div class="lb-tier-tag">Immortal</div></div>
+      <div class="lb-row"><div class="lb-rank">06</div><div class="lb-player"><div class="lb-name">HILLO</div><div class="lb-team">BR Prime</div></div><div class="lb-role">Jungle</div><div class="lb-tier-tag">Immortal</div></div>
+      <div class="lb-row"><div class="lb-rank">07</div><div class="lb-player"><div class="lb-name">ＨｕｌＴｚｙ</div><div class="lb-team">BR Prime</div></div><div class="lb-role">Roam</div><div class="lb-tier-tag">Immortal</div></div>
+      <div class="lb-row"><div class="lb-rank">08</div><div class="lb-player"><div class="lb-name">Jazu</div><div class="lb-team">BR Nemesis</div></div><div class="lb-role">Mage</div><div class="lb-tier-tag">Immortal</div></div>
+      <div class="lb-row"><div class="lb-rank">09</div><div class="lb-player"><div class="lb-name">Keoasuno</div><div class="lb-team">BR Nemesis</div></div><div class="lb-role">Exp</div><div class="lb-tier-tag">Immortal</div></div>
+      <div class="lb-row"><div class="lb-rank">10</div><div class="lb-player"><div class="lb-name">Mitsuki</div><div class="lb-team">BR 2</div></div><div class="lb-role">Mage</div><div class="lb-tier-tag">Immortal</div></div>
+      <div class="lb-row"><div class="lb-rank">11</div><div class="lb-player"><div class="lb-name">Nomi :3</div><div class="lb-team">BR Nemesis</div></div><div class="lb-role">Mage</div><div class="lb-tier-tag">Immortal</div></div>
+      <div class="lb-row"><div class="lb-rank">12</div><div class="lb-player"><div class="lb-name">rymluvkaashi</div><div class="lb-team">BR 2</div></div><div class="lb-role">Roam</div><div class="lb-tier-tag">Immortal</div></div>
+      <div class="lb-row"><div class="lb-rank">13</div><div class="lb-player"><div class="lb-name">Saurian :p</div><div class="lb-team">BR 2</div></div><div class="lb-role">Mage</div><div class="lb-tier-tag">Immortal</div></div>
+      <div class="lb-row"><div class="lb-rank">14</div><div class="lb-player"><div class="lb-name">ꜱкаяапg۶ৎ</div><div class="lb-team">BR 2</div></div><div class="lb-role">Roam</div><div class="lb-tier-tag">Immortal</div></div>
+      <div class="lb-row"><div class="lb-rank">15</div><div class="lb-player"><div class="lb-name">Tatta</div><div class="lb-team">BR Nemesis</div></div><div class="lb-role">Gold</div><div class="lb-tier-tag">Immortal</div></div>
+      <div class="lb-row"><div class="lb-rank">16</div><div class="lb-player"><div class="lb-name">Zangsu</div><div class="lb-team">BR Prime</div></div><div class="lb-role">Jungle</div><div class="lb-tier-tag">Immortal</div></div>
+      <div class="lb-row"><div class="lb-rank">17</div><div class="lb-player"><div class="lb-name">ડꫝꪖᦔꪮ᭙</div><div class="lb-team">BR Prime</div></div><div class="lb-role">Roam</div><div class="lb-tier-tag">Immortal</div></div>
+      <div class="lb-row"><div class="lb-rank">18</div><div class="lb-player"><div class="lb-name">m2b15</div><div class="lb-team">BR Nyx</div></div><div class="lb-role">Mage</div><div class="lb-tier-tag">Immortal</div></div>
+    </div>
+  </div>
 
-    // Sort: stars descending, nulls last, then 0 stars
-    players.sort((a, b) => {
-        let sa = (a.stars === null || a.stars === undefined) ? -1 : a.stars;
-        let sb = (b.stars === null || b.stars === undefined) ? -1 : b.stars;
-        return sb - sa;
-    });
+  <!-- MYTHICAL GLORY -->
+  <div class="tier-group">
+    <div class="tier-head">
+      <span class="tier-dot" style="background:#f0997b;"></span>
+      <span class="tier-name">Mythical Glory</span>
+      <span class="tier-count">30 players</span>
+    </div>
+    <div class="lb-table">
+      <div class="lb-row"><div class="lb-rank">19</div><div class="lb-player"><div class="lb-name">AiZane</div><div class="lb-team">BR Prime</div></div><div class="lb-role">Exp</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">20</div><div class="lb-player"><div class="lb-name">aloo</div><div class="lb-team">BR Prime</div></div><div class="lb-role">Gold</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">21</div><div class="lb-player"><div class="lb-name">Aman7</div><div class="lb-team">BR Nyx</div></div><div class="lb-role">Jungle</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">22</div><div class="lb-player"><div class="lb-name">Asham</div><div class="lb-team">BR Nyx</div></div><div class="lb-role">Roam</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">23</div><div class="lb-player"><div class="lb-name">Axain</div><div class="lb-team">BR 2</div></div><div class="lb-role">Exp</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">24</div><div class="lb-player"><div class="lb-name">ᴀʟғʀᴇᴅ</div><div class="lb-team">BR Prime</div></div><div class="lb-role">Exp</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">25</div><div class="lb-player"><div class="lb-name">Chrollo Lucifer</div><div class="lb-team">BR 2</div></div><div class="lb-role">—</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">26</div><div class="lb-player"><div class="lb-name">DelvineTheOracle</div><div class="lb-team">BR Prime</div></div><div class="lb-role">Roam</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">27</div><div class="lb-player"><div class="lb-name">ekko</div><div class="lb-team">BR Prime</div></div><div class="lb-role">Mage</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">28</div><div class="lb-player"><div class="lb-name">F@@THIK_44</div><div class="lb-team">BR 2</div></div><div class="lb-role">Mage</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">29</div><div class="lb-player"><div class="lb-name">Izzu</div><div class="lb-team">BR Nemesis</div></div><div class="lb-role">Jungle</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">30</div><div class="lb-player"><div class="lb-name">JANAHU</div><div class="lb-team">BR Nemesis</div></div><div class="lb-role">Exp</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">31</div><div class="lb-player"><div class="lb-name">Jimbo</div><div class="lb-team">BR 2</div></div><div class="lb-role">Flex</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">32</div><div class="lb-player"><div class="lb-name">K.</div><div class="lb-team">BR Nyx</div></div><div class="lb-role">Jungle</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">33</div><div class="lb-player"><div class="lb-name">Luna</div><div class="lb-team">BR Nemesis</div></div><div class="lb-role">Roam</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">34</div><div class="lb-player"><div class="lb-name">maaız</div><div class="lb-team">BR Prime</div></div><div class="lb-role">Roam</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">35</div><div class="lb-player"><div class="lb-name">Mimiim</div><div class="lb-team">BR 2</div></div><div class="lb-role">—</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">36</div><div class="lb-player"><div class="lb-name">Mogucantinspire</div><div class="lb-team">BR 2</div></div><div class="lb-role">Jungle</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">37</div><div class="lb-player"><div class="lb-name">Namikaze</div><div class="lb-team">BR Nemesis</div></div><div class="lb-role">Gold</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">38</div><div class="lb-player"><div class="lb-name">Naveel</div><div class="lb-team">BR Nyx</div></div><div class="lb-role">Exp</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">39</div><div class="lb-player"><div class="lb-name">Noctis</div><div class="lb-team">BR Nyx</div></div><div class="lb-role">Mage</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">40</div><div class="lb-player"><div class="lb-name">Phantom</div><div class="lb-team">BR Nyx</div></div><div class="lb-role">Jungle</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">41</div><div class="lb-player"><div class="lb-name">Poison</div><div class="lb-team">BR 2</div></div><div class="lb-role">Mage</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">42</div><div class="lb-player"><div class="lb-name">Suki</div><div class="lb-team">BR 2</div></div><div class="lb-role">Gold</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">43</div><div class="lb-player"><div class="lb-name">ᴠ@ɴᴅᴇттᴀ</div><div class="lb-team">BR Prime</div></div><div class="lb-role">Gold</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">44</div><div class="lb-player"><div class="lb-name">Xeno</div><div class="lb-team">BR Prime</div></div><div class="lb-role">Exp</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">45</div><div class="lb-player"><div class="lb-name">Yaan Kumar</div><div class="lb-team">BR 2</div></div><div class="lb-role">Flex</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">46</div><div class="lb-player"><div class="lb-name">Zombie</div><div class="lb-team">BR Nyx</div></div><div class="lb-role">Flex</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">47</div><div class="lb-player"><div class="lb-name">мʏɴх</div><div class="lb-team">BR Prime</div></div><div class="lb-role">Gold</div><div class="lb-tier-tag">Glory</div></div>
+      <div class="lb-row"><div class="lb-rank">48</div><div class="lb-player"><div class="lb-name">鬼•|Nɪᴋᴀシ</div><div class="lb-team">BR Prime</div></div><div class="lb-role">Jungle</div><div class="lb-tier-tag">Glory</div></div>
+    </div>
+  </div>
 
-    // Build rows
-    const container = document.querySelector('.ranking-table');
-    const header = container.querySelector('.rank-header');
-    // Remove any extra children
-    while (container.children.length > 1) {
-        container.removeChild(container.lastChild);
-    }
+  <!-- MYTHICAL HONOR -->
+  <div class="tier-group">
+    <div class="tier-head">
+      <span class="tier-dot" style="background:#85B7EB;"></span>
+      <span class="tier-name">Mythical Honor</span>
+      <span class="tier-count">10 players</span>
+    </div>
+    <div class="lb-table">
+      <div class="lb-row"><div class="lb-rank">49</div><div class="lb-player"><div class="lb-name">AaL4M</div><div class="lb-team">BR 2</div></div><div class="lb-role">Roam</div><div class="lb-tier-tag">Honor</div></div>
+      <div class="lb-row"><div class="lb-rank">50</div><div class="lb-player"><div class="lb-name">ANDY</div><div class="lb-team">BR Nyx</div></div><div class="lb-role">Gold</div><div class="lb-tier-tag">Honor</div></div>
+      <div class="lb-row"><div class="lb-rank">51</div><div class="lb-player"><div class="lb-name">Azif</div><div class="lb-team">BR Nyx</div></div><div class="lb-role">Roam</div><div class="lb-tier-tag">Honor</div></div>
+      <div class="lb-row"><div class="lb-rank">52</div><div class="lb-player"><div class="lb-name">Black_053</div><div class="lb-team">BR 2</div></div><div class="lb-role">Exp</div><div class="lb-tier-tag">Honor</div></div>
+      <div class="lb-row"><div class="lb-rank">53</div><div class="lb-player"><div class="lb-name">Calcifer</div><div class="lb-team">BR Nyx</div></div><div class="lb-role">Gold</div><div class="lb-tier-tag">Honor</div></div>
+      <div class="lb-row"><div class="lb-rank">54</div><div class="lb-player"><div class="lb-name">HUSSAIN</div><div class="lb-team">BR Nyx</div></div><div class="lb-role">Exp</div><div class="lb-tier-tag">Honor</div></div>
+      <div class="lb-row"><div class="lb-rank">55</div><div class="lb-player"><div class="lb-name">maaz</div><div class="lb-team">BR Nyx</div></div><div class="lb-role">Gold</div><div class="lb-tier-tag">Honor</div></div>
+      <div class="lb-row"><div class="lb-rank">56</div><div class="lb-player"><div class="lb-name">Raa~</div><div class="lb-team">BR Prime</div></div><div class="lb-role">Roam</div><div class="lb-tier-tag">Honor</div></div>
+      <div class="lb-row"><div class="lb-rank">57</div><div class="lb-player"><div class="lb-name">Vooko</div><div class="lb-team">BR Nyx</div></div><div class="lb-role">Exp</div><div class="lb-tier-tag">Honor</div></div>
+      <div class="lb-row"><div class="lb-rank">58</div><div class="lb-player"><div class="lb-name">空の</div><div class="lb-team">BR 2</div></div><div class="lb-role">Roam</div><div class="lb-tier-tag">Honor</div></div>
+    </div>
+  </div>
 
-    players.forEach((p, index) => {
-        const row = document.createElement('div');
-        row.className = 'rank-row';
+  <!-- MYTHIC -->
+  <div class="tier-group">
+    <div class="tier-head">
+      <span class="tier-dot" style="background:#c4b5fd;"></span>
+      <span class="tier-name">Mythic</span>
+      <span class="tier-count">5 players</span>
+    </div>
+    <div class="lb-table">
+      <div class="lb-row"><div class="lb-rank">59</div><div class="lb-player"><div class="lb-name">DEATH MESSENGER</div><div class="lb-team">BR Nyx</div></div><div class="lb-role">Exp</div><div class="lb-tier-tag">Mythic</div></div>
+      <div class="lb-row"><div class="lb-rank">60</div><div class="lb-player"><div class="lb-name">Faail</div><div class="lb-team">BR 2</div></div><div class="lb-role">—</div><div class="lb-tier-tag">Mythic</div></div>
+      <div class="lb-row"><div class="lb-rank">61</div><div class="lb-player"><div class="lb-name">ñãşhų</div><div class="lb-team">BR Prime</div></div><div class="lb-role">Adjust</div><div class="lb-tier-tag">Mythic</div></div>
+      <div class="lb-row"><div class="lb-rank">62</div><div class="lb-player"><div class="lb-name">Vaa!l</div><div class="lb-team">BR 2</div></div><div class="lb-role">Flex</div><div class="lb-tier-tag">Mythic</div></div>
+      <div class="lb-row"><div class="lb-rank">63</div><div class="lb-player"><div class="lb-name">Yaaseen</div><div class="lb-team">BR 2</div></div><div class="lb-role">Gold</div><div class="lb-tier-tag">Mythic</div></div>
+    </div>
+  </div>
 
-        const rankNum = document.createElement('span');
-        rankNum.className = 'rank-number';
-        rankNum.textContent = index + 1;
+</section>
 
-        const nameSpan = document.createElement('span');
-        nameSpan.className = 'player-name';
-        nameSpan.textContent = p.name;
+<!-- ABOUT / CTA -->
+<section id="about">
+  <div class="about-container">
+    <h2>About Blood Ravens</h2>
+    <p>
+      Blood Ravens fields four active squads climbing the mythic tiers together. Rankings above reflect
+      the current season snapshot, refreshed as players push into higher tiers.
+      <br><br>
+      Want your name on this board? <a href="#home">Reach out to a squad captain</a> to try out.
+    </p>
+  </div>
+</section>
 
-        const starsSpan = document.createElement('span');
-        starsSpan.className = 'player-stars';
-        starsSpan.textContent = (p.stars !== null && p.stars !== undefined) ? p.stars + ' ★' : '—';
+<footer>
+  <p>© 2026 Blood Ravens &nbsp;·&nbsp; Internal Roster Leaderboard</p>
+</footer>
 
-        const rankSpan = document.createElement('span');
-        rankSpan.className = 'player-rank';
-        rankSpan.textContent = p.rank;
-
-        const roleSpan = document.createElement('span');
-        const rolePill = document.createElement('span');
-        rolePill.className = 'role-pill';
-        // Determine role class
-        const roleLower = p.role.toLowerCase();
-        if (roleLower.includes('mage')) rolePill.classList.add('role-mage');
-        else if (roleLower.includes('roam')) rolePill.classList.add('role-roam');
-        else if (roleLower.includes('jungle')) rolePill.classList.add('role-jungle');
-        else if (roleLower.includes('exp')) rolePill.classList.add('role-exp');
-        else if (roleLower.includes('gold')) rolePill.classList.add('role-gold');
-        else if (roleLower.includes('flex')) rolePill.classList.add('role-flex');
-        else if (roleLower.includes('adjust')) rolePill.classList.add('role-adjust');
-        else rolePill.classList.add('role-none');
-        rolePill.textContent = p.role;
-        roleSpan.appendChild(rolePill);
-
-        row.appendChild(rankNum);
-        row.appendChild(nameSpan);
-        row.appendChild(starsSpan);
-        row.appendChild(rankSpan);
-        row.appendChild(roleSpan);
-
-        container.appendChild(row);
-    });
-</script>
 </body>
 </html>
