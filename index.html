@@ -46,33 +46,33 @@ body {
   padding: 0;
 }
 
-/* NAV */
+/* ===== NAV – FIXED FOR MOBILE ===== */
 nav {
   background: var(--nav-bg);
-  padding: 1rem 2rem;
+  padding: 0.8rem 1.2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
+  flex-wrap: nowrap;           /* 🔥 prevent wrapping on mobile */
+  gap: 0.5rem;
 }
 nav .logo {
   color: var(--accent);
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   text-decoration: none;
   letter-spacing: 0.04em;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-}
-nav .logo .material-icons {
-  font-size: 1.8rem;
-  color: var(--accent);
+  gap: 0.3rem;
+  white-space: nowrap;         /* keep "Blood Ravens" on one line */
+  flex-shrink: 0;             /* prevent shrinking */
 }
 nav ul {
   list-style: none;
   display: flex;
-  gap: 1.8rem;
+  gap: 0.3rem;                /* tighter gap on mobile */
+  align-items: center;
+  flex-shrink: 0;             /* prevent shrinking */
 }
 nav ul a {
   color: var(--nav-link-color);
@@ -81,19 +81,44 @@ nav ul a {
   font-size: 0.85rem;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+  padding: 0.3rem 0.5rem;
   transition: color 0.2s;
+  white-space: nowrap;
 }
 nav ul a:hover { color: var(--accent); }
-nav ul a .material-icons { font-size: 1.2rem; }
+nav ul a .material-icons { font-size: 1.3rem; }
 
-/* HERO – FULL WIDTH */
+/* hide text labels, show only icons on small screens */
+@media (max-width: 520px) {
+  nav {
+    padding: 0.6rem 0.8rem;
+    gap: 0.2rem;
+  }
+  nav .logo {
+    font-size: 1rem;
+  }
+  nav ul {
+    gap: 0.1rem;
+  }
+  nav ul a {
+    padding: 0.2rem 0.3rem;
+  }
+  nav ul a .nav-label {
+    display: none;            /* 🔥 hides "Home", "Leaderboard", "About" */
+  }
+  nav ul a .material-icons {
+    font-size: 1.4rem;        /* slightly bigger icons for tap targets */
+  }
+}
+
+/* ===== HERO – TALLER ===== */
 .hero-full {
   width: 100vw;
   position: relative;
   left: 50%;
   transform: translateX(-50%);
-  min-height: 520px;
+  min-height: 620px;          /* 🔥 increased from 520px */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -101,7 +126,7 @@ nav ul a .material-icons { font-size: 1.2rem; }
   overflow: hidden;
   background: var(--nav-bg);
   text-align: center;
-  padding: 2rem;
+  padding: 2.5rem 1.5rem;
 }
 .hero-bg {
   position: absolute;
@@ -124,7 +149,7 @@ nav ul a .material-icons { font-size: 1.2rem; }
 .hero-content {
   position: relative;
   z-index: 2;
-  padding: 0 2rem;
+  padding: 0 1.5rem;
   max-width: 800px;
   text-align: center;
 }
@@ -323,7 +348,7 @@ section h2 .material-icons {
 }
 .lb-stars {
   font-weight: 600;
-  color: var(--crimson);       /* RED star numbers */
+  color: var(--crimson);
   font-variant-numeric: tabular-nums;
 }
 .lb-rank-name {
@@ -384,35 +409,54 @@ footer {
 }
 footer a { color: var(--accent); text-decoration: none; }
 
+/* ===== RESPONSIVE – MOBILE ===== */
 @media (max-width: 700px) {
   .lb-row, .lb-header {
-    grid-template-columns: 40px 1fr 70px 100px 70px;
+    /* 🔥 Removed the Rank column — now 4 columns: # | Player | Stars | Role */
+    grid-template-columns: 40px 1fr 70px 70px;
     font-size: 0.8rem;
     padding: 0.5rem 0.8rem;
   }
   .lb-header { font-size: 0.55rem; }
+
+  /* Hide the Rank column completely */
+  .lb-rank-name {
+    display: none;
+  }
+  .lb-header > span:nth-child(4) {
+    display: none;
+  }
+
   .role-pill { font-size: 0.55rem; padding: 0.1rem 0.5rem; }
   .hero-title { font-size: 2rem; }
   .hero-sub { font-size: 1rem; }
-  nav ul { gap: 1rem; }
   .summary-card { padding: 0.8rem 1rem; }
   .summary-value { font-size: 1.4rem; }
-  .hero-full { min-height: 360px; }
+
+  .hero-full { min-height: 600px; }
+}
+
+/* extra small phones */
+@media (max-width: 400px) {
+  .hero-full { min-height: 420px; }
+  .hero-title { font-size: 1.6rem; }
+  .hero-desc { font-size: 0.85rem; }
+  .btn, .btn-outline { padding: 0.7rem 1.2rem; font-size: 0.65rem; }
 }
 </style>
 </head>
 <body>
 
 <nav>
-  <a href="#home" class="logo"><span class="material-icons">military_tech</span> Blood Ravens</a>
+  <a href="#home" class="logo">Blood Ravens</a>
   <ul>
-    <li><a href="#home"><span class="material-icons">home</span> Home</a></li>
-    <li><a href="#leaderboard"><span class="material-icons">leaderboard</span> Leaderboard</a></li>
-    <li><a href="#about"><span class="material-icons">info</span> About</a></li>
+    <li><a href="#home"><span class="material-icons">home</span><span class="nav-label">Home</span></a></li>
+    <li><a href="#leaderboard"><span class="material-icons">military_tech</span><span class="nav-label">Leaderboard</span></a></li>
+    <li><a href="#about"><span class="material-icons">info</span><span class="nav-label">About</span></a></li>
   </ul>
 </nav>
 
-<!-- HERO (full width) -->
+<!-- HERO -->
 <section class="hero-full" id="home">
   <div class="hero-bg"></div>
   <div class="hero-grid"></div>
@@ -458,7 +502,7 @@ footer a { color: var(--accent); text-decoration: none; }
       <span>#</span>
       <span>Player</span>
       <span>Stars</span>
-      <span>Rank</span>
+      <span>Rank</span>        <!-- will be hidden on mobile -->
       <span>Main Role</span>
     </div>
     <div id="leaderboardRows"></div>
@@ -475,8 +519,8 @@ footer a { color: var(--accent); text-decoration: none; }
       We are a competitive guild forged in the crucible of the mythic tiers, where every player
       pushes to sharpen their craft and elevate those around them.
       <br><br>
-      Our squads — Prime, Nemesis, Nyx, and 2 — are more than teams; they are a brotherhood
-      of ravens, each bringing their own strength to the flock. Whether you're a seasoned
+      Our squads — Prime, Nemesis, Revnant, and BR2 — are more than teams; we are a brotherhood
+      of ravens, each bringing our own strength to the flock. Whether you're a seasoned
       immortal or a rising star, the Blood Ravens welcome those who dare to fly higher.
     </p>
   </div>
@@ -556,11 +600,7 @@ const players = [
   { name: "ñãşhų", stars: 8, rank: "Mythic", role: "Adjust" },
   { name: "Ibaanu", stars: 0, rank: "Unranked", role: "—" },
   { name: "isagi", stars: 0, rank: "Unranked", role: "Jungle" },
-  { name: "Taiyo", stars: 0, rank: "Unranked", role: "Roam" },
-  { name: "Ragebird._", stars: null, rank: "Freeloaders", role: "Roam" },
-  { name: "Maaish", stars: null, rank: "Freeloaders", role: "—" },
-  { name: "Mishal", stars: null, rank: "Freeloaders", role: "—" },
-  { name: "tox_JOJO", stars: null, rank: "Freeloaders", role: "—" }
+  { name: "Taiyo", stars: 0, rank: "Unranked", role: "Roam" }
 ];
 
 players.sort((a, b) => {
