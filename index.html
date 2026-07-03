@@ -481,11 +481,13 @@ footer a { color: var(--accent); text-decoration: none; }
   <div class="summary-bar">
     <div class="summary-card">
       <div class="summary-label">Total Active</div>
-      <div class="summary-value" id="totalPlayers">—</div>
+      <!-- <div class="summary-value" id="totalPlayers">—</div> -->
+       <div class="summary-value">72</div>
     </div>
     <div class="summary-card">
       <div class="summary-label">Ranked Players</div>
-      <div class="summary-value" id="rankedPlayers">—</div>
+      <!-- <div class="summary-value" id="rankedPlayers">—</div> -->
+       <div class="summary-value">65</div>
     </div>
     <div class="summary-card">
       <div class="summary-label">Highest Stars</div>
@@ -493,8 +495,8 @@ footer a { color: var(--accent); text-decoration: none; }
     </div>
     <div class="summary-card">
       <div class="summary-label">Last Updated</div>
-    <div class="summary-value accent" id="lastUpdated">—</div>
-</div>
+      <div class="summary-value accent" id="lastUpdated">—</div>
+    </div>
   </div>
 
   <div class="leaderboard-wrap">
@@ -531,9 +533,7 @@ footer a { color: var(--accent); text-decoration: none; }
 </footer>
 
 <script>
-  document.getElementById('lastUpdated').textContent = new Date().toLocaleDateString('en-US', {
-  year: 'numeric', month: 'long', day: 'numeric'
-});
+  
 // ===== PLAYER DATA (filtered: Left = FALSE) =====
 const players = [
   { name: "─ Sʜᴇɴ୨ৎ", stars: 251, rank: "Mythical Immortal", role: "Mage" },
@@ -606,23 +606,26 @@ const players = [
   { name: "Taiyo", stars: 0, rank: "Unranked", role: "Roam" }
 ];
 
+// sort descending by stars
 players.sort((a, b) => {
   const sa = (a.stars === null || a.stars === undefined) ? -1 : a.stars;
   const sb = (b.stars === null || b.stars === undefined) ? -1 : b.stars;
   return sb - sa;
 });
 
+// update summary stats
 const total = players.length;
 const ranked = players.filter(p => p.stars !== null && p.stars >= 0).length;
 const highest = players.filter(p => p.stars !== null).length ? Math.max(...players.filter(p => p.stars !== null).map(p => p.stars)) : 0;
 const topRankObj = players.find(p => p.stars === highest);
 const topRank = topRankObj ? topRankObj.rank : '—';
 
-document.getElementById('totalPlayers').textContent = total;
-document.getElementById('rankedPlayers').textContent = ranked;
+//document.getElementById('totalPlayers').textContent = total;
+//document.getElementById('rankedPlayers').textContent = ranked;
 document.getElementById('highestStars').textContent = highest ? highest + ' ★' : '—';
-document.getElementById('topRank').textContent = topRank;
+// lastUpdated is set after the loop
 
+// generate rows
 const container = document.getElementById('leaderboardRows');
 players.forEach((p, index) => {
   const row = document.createElement('div');
@@ -664,6 +667,12 @@ players.forEach((p, index) => {
 
   container.appendChild(row);
 });
+
+// set last updated date
+document.getElementById('lastUpdated').textContent = new Date().toLocaleDateString('en-US', {
+  year: 'numeric', month: 'long', day: 'numeric'
+});
+
 </script>
 </body>
 </html>
