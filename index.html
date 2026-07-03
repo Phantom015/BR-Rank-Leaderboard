@@ -492,9 +492,9 @@ footer a { color: var(--accent); text-decoration: none; }
       <div class="summary-value" id="highestStars">—</div>
     </div>
     <div class="summary-card">
-      <div class="summary-label">Top Rank</div>
-      <div class="summary-value accent" id="topRank">—</div>
-    </div>
+      <div class="summary-label">Last Updated</div>
+    <div class="summary-value accent" id="lastUpdated">—</div>
+</div>
   </div>
 
   <div class="leaderboard-wrap">
@@ -531,6 +531,9 @@ footer a { color: var(--accent); text-decoration: none; }
 </footer>
 
 <script>
+  document.getElementById('lastUpdated').textContent = new Date().toLocaleDateString('en-US', {
+  year: 'numeric', month: 'long', day: 'numeric'
+});
 // ===== PLAYER DATA (filtered: Left = FALSE) =====
 const players = [
   { name: "─ Sʜᴇɴ୨ৎ", stars: 251, rank: "Mythical Immortal", role: "Mage" },
